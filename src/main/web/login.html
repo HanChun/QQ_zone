@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div id="div0">
+        <div id="div_container">
+            <p class="center"> User LogIn Page </p>
+            <form th:action="@{/user.do}" method="get">
+                <!--初始访问： http://localhost:8080/pro19/page.do?operate=page&page=login.html-->
+                <input type="hidden" name="operate" value="login"/>
+                <table>
+                    <tr>
+                        <th> UserName ：</th>
+                        <td><input type="text" name="loginId" value="u001"/></td>
+                    </tr>
+                    <tr>
+                        <th> Password ：</th>
+                        <td><input type="password" name="pwd" value="ok"/></td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">
+                            <input type="submit" value="LogIn"/>
+                            <input type="button" value="New User"/>
+                        </th>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

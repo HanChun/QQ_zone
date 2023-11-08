@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/detail.css}">
+    <script language="JavaScript">
+        function showDelImg(imgId){
+            var obj = document.getElementById(imgId) ;
+            if(obj){
+                obj.style.display='inline';
+            }
+        }
+        function hiddenDelImg(imgId){
+            var obj = document.getElementById(imgId) ;
+            if(obj){
+                obj.style.display='none';
+            }
+        }
+        function delReply(replyId , topicId){
+            if(window.confirm("Confirm to delete ？")){
+                window.location.href='reply.do?operate=delReply&replyId='+replyId+'&topicId='+topicId;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="div_back_to_topic_list">
+        <a href="main.html">返回日志列表</a>
+    </div>
+
+    <div id="div_topic_detail">
+        <div id="div_topic_info">
+            <!-- topic自身信息 -->
+            <table id="tbl_topic_info">
+                <tr>
+                    <td rowspan="2" class="w14 h96">
+                        <div class="h64 center " style="width:100%;">
+                            <img class="img56 " th:src="@{|/imgs/${session.topic.author.headImg}|}"/>
+                        </div>
+                        <div class="h32 center" style="width:100%;" th:text="${session.topic.author.nickName}">SBSB</div>
+                    </td>
+
+                    <td class="topic_title" onmousemove="showDelImg('img01')" onmouseout="hiddenDelImg('img01')">
+                        <img id="img01" style="float: right;margin-top:2px;margin-right:2px;display: none;width:24px;height: 24px;" th:src="@{/imgs/del.jpg}"/>
+                        <span th:text="${session.topic.title}">SBSBSBSBSB</span>
+                        <span class="title_date_right" th:text="${session.topic.topicDate}">2021-09-01 12:30:55</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td th:text="${session.topic.content}">SBSBSBSBSBSBSBSB</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div id="div_reply_list">
+            <!-- 好友回复信息 -->
+            <table class="tbl_reply_info" th:each="reply:${session.topic.replyList}">
+                <tr>
+                    <td rowspan="2" class="w14 h88">
+                        <div class="h56 center" style="width:100%;">
+                            <img class="img48" th:src="@{|/imgs/${reply.author.headImg}|}"/>
+                        </div>
+
+                        <div class="h32 center" style="width:100%;" th:text="${reply.author.nickName}">nickName</div>
+                    </td>
+
+
+
+                    <td class="reply_title" th:onmouseover="|showDelImg('img${reply.id}')|" th:onmouseout="|hiddenDelImg('img${reply.id}')|">
+                        <span th:text="|Reply to: ${session.topic.title}|">SBSBSBSB</span>
+                        <!--
+                            出现删除 图标的 条件：
+                             1. 当下 我在我自己的空间，我对于自己空间里面的 所有评论都有 删除的权限
+                             2. 当前回复的作者就是我（那我可以删除自己的回复）===> Not the author of the space, but I can delete my own reply.
+                         -->
+                        <img th:if="${session.userBasic.id==session.friend.id || session.userBasic.id==reply.author.id}" th:id="|img${reply.id}|" class="delReplyImg" th:src="@{/imgs/del.jpg}" th:onclick="|delReply(${reply.id} , ${session.topic.id})|"/>
+                        <span class="title_date_right" th:text="${reply.replyDate}">2021-09-01 14:35:15</span>
+                    </td>
+
+                </tr>
+
+
+                <tr>
+                    <td th:onmouseover="|showDelImg('a${reply.id}')|" th:onmouseout="|hiddenDelImg('a${reply.id}')|">
+                        <span th:text="${reply.content}">SBSBSB</span><br/>
+                        <ul style="width: 96%;border:1px dotted lightgray;list-style-type: none;padding-left:8px;padding-right:8px;" th:if="${reply.hostReply!=null}">
+                            <li style="color:#6e0000;font-size:12px;width: 100%;border:0px solid red;" th:text="${reply.hostReply.content}">SBSBSBSBSB</li>
+                            <li style="color:#6e0000;font-size:12px;width:100%;border:0px solid blue;text-align: right;margin-right: 8px;" th:text="|Owner reply at :${reply.hostReply.hostReplyDate}|">主人回复于2021/10/01 </li>
+                        </ul>
+                        <a th:id="|a${reply.id}|" th:unless="${reply.hostReply!=null}"  href="#" style="float: right; display: none;">Add Owner Reply</a>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+
+    <div id="div_add_reply">
+        <p class="add_reply_title">Add Reply:</p>
+
+        <form action="reply.do" method="post">
+            <input type="hidden" name="operate" value="addReply"/>
+            <input type="hidden" name="topicId" th:value="${session.topic.id}"/>
+            <table>
+                <tr>
+                    <th style="width: 25%">Reply to  :</th>
+                    <td><input type="text" th:value="| ${session.topic.title}|" value="《Reply content！》" readonly /></td>
+                </tr>
+                <tr>
+                    <th>Reply Content:</th>
+                    <td><textarea name="content" rows="3"> Another reply ! </textarea></td>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                        <input type="submit" value=" submit "/>
+                        <input type="reset" value=" reset "/>
+                    </th>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+
+</body>
+</html>
+
+
+
+
+
+
